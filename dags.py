@@ -1,20 +1,36 @@
 from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from datetime import datetime
-from airflow.operators.empty import EmptyOperator
 
-default_args = {
-        'owner' : 'airflow',
-        'start_date' : datetime(2022, 11, 12)
-        }
+from dataor import update_data
+        
 
-dag = DAG(
-        dag_id='DAG-1',
-        default_args=default_args, 
+with DAG(
+        dag_id='DVC-DAG',
+        start_date=datetime(2023, 12, 7),
+        schedule_interval='@once', 
         catchup=False
-    )
+    ) as dag:
+        
+        update_data_node = PythonOperator(
+            task_id='scrape_data',
+            python_callable=update_data
+        )
+        
+        dvc_init_node = BashOperator(
+            task_id='dvc_init',
+            bash_command='dvc init',
+        )
 
-start = EmptyOperator(task_id='start', dag=dag)
+        dvc_update_node = BashOperator(
+            task_id='dvc_add',
+            bash_command='dvc add data.txt',
+        )
+        
+        dvc_push_node = BashOperator(
+            task_id='dvc_push',
+            bash_command='dvc push',
+        )
 
-end = EmptyOperator(task_id='end', dag=dag)
-
-start >> end
+        update_data_node >> dvc_init_node >> dvc_update_node >> dvc_push_node
