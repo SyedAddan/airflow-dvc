@@ -34,12 +34,14 @@ with DAG(
         
         dvc_init_node = BashOperator(
             task_id='dvc_init',
-            bash_command='dvc init --no-scm',
+            bash_command='dvc init --no-scm -f',
+            cwd='/opt/airflow/dags'
         )
 
         dvc_update_node = BashOperator(
             task_id='dvc_add',
             bash_command='dvc add /opt/airflow/dags/data.txt',
+            cwd='/opt/airflow/dags'
         )
         
         # dvc_push_node = BashOperator(
