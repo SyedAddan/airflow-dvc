@@ -30,13 +30,14 @@ with DAG(
         git_init_node = BashOperator(
             task_id='git_init',
             bash_command='git init',
-        )
-        
-        dvc_init_node = BashOperator(
-            task_id='dvc_init',
-            bash_command='dvc init --no-scm -f',
             cwd='/opt/airflow/dags'
         )
+        
+        # dvc_init_node = BashOperator(
+        #     task_id='dvc_init',
+        #     bash_command='dvc init --no-scm -f',
+        #     cwd='/opt/airflow/dags'
+        # )
 
         dvc_update_node = BashOperator(
             task_id='dvc_add',
@@ -44,9 +45,18 @@ with DAG(
             cwd='/opt/airflow/dags'
         )
         
-        # dvc_push_node = BashOperator(
-        #     task_id='dvc_push',
-        #     bash_command='dvc push',
-        # )
+        dvc_set_gdrive_node = BashOperator(
+            task_id='dvc_set_gdrive',
+            bash_command='pip install dvc_gdrive && dvc remote add --default drive gdrive://1afYXggAkYObxdjaxK1eXH2wJ_JKN4-Nw -f && dvc remote modify drive gdrive_acknowledge_abuse true',
+            cwd='/opt/airflow/dags'
+        )
+        
+        dvc_push_node = BashOperator(
+            task_id='dvc_push',
+            bash_command='dvc push',
+            cwd="/opt/airflow/dags"
+        )
 
-        update_data_node >> git_init_node >> dvc_init_node >> dvc_update_node
+        # update_data_node >> git_init_node >> dvc_init_node >> dvc_update_node
+        update_data_node >> git_init_node >> dvc_update_node
+        # update_data_node >> git_init_node >> dvc_update_node >> dvc_set_gdrive_node >> dvc_push_node
