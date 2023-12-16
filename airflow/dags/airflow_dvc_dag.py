@@ -58,5 +58,5 @@ with DAG(
         )
 
         # update_data_node >> git_init_node >> dvc_init_node >> dvc_update_node
-        update_data_node >> git_init_node >> dvc_update_node
-        # update_data_node >> git_init_node >> dvc_update_node >> dvc_set_gdrive_node >> dvc_push_node
+        # update_data_node >> git_init_node >> dvc_update_node
+        update_data_node >> git_init_node >> dvc_update_node >> dvc_set_gdrive_node >> dvc_push_node
