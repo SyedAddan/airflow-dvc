@@ -1,0 +1,6 @@
+/logs
+airflow-webserver.pid
+webserver_config.py
+airflow.cfg
+airflow.db
+standalone_admin_password.txt
